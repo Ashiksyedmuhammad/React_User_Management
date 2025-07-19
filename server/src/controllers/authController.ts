@@ -44,22 +44,27 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-// Register
-export const register = async (req: Request, res: Response): Promise<void> => {
+
+
+export const register = async (req: Request, res: Response): Promise<any> => {
     try {
         const { name, email, password }: RegisterRequest = req.body;
-        console.log("Register request:", { name, email });
 
-        // Check if user already exists
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'Name, email, and password are required.' });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
+        }
+
         const existingUser: IUser | null = await User.findOne({ email });
         if (existingUser) {
-            res.status(400).json({ message: 'User already exists' });
-            return;
+            return res.status(400).json({ message: 'User already exists' });
         }
 
         const hashedPassword: string = await bcrypt.hash(password, 10);
 
-        // Create new user
         const newUser: IUser = new User({
             name,
             email,
@@ -74,18 +79,20 @@ export const register = async (req: Request, res: Response): Promise<void> => {
             email: newUser.email
         };
 
-        res.status(201).json(responseData);
+        return res.status(201).json(responseData);
 
     } catch (error) {
         console.error('Registration error:', error instanceof Error ? error.message : error);
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error registering user',
             error: error instanceof Error ? error.message : 'Unknown error'
         });
     }
 };
 
-// Login
+
+
+
 export const login = async (req: Request, res: Response): Promise<any> => {
     try {
         const { email, password }: LoginRequest = req.body;
@@ -104,10 +111,10 @@ export const login = async (req: Request, res: Response): Promise<any> => {
             return;
         }
 
-        // Generate tokens
-        const accessToken = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET!, { expiresIn: '10m' });
+       
+        const accessToken = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '10m' });
         const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET as string, { expiresIn: '1h' });
-
+        
         const responseData: AuthResponse = {
             name: user.name,
             email: user.email,
@@ -142,7 +149,6 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-// Refresh token end-point
 export const refreshToken = (req: Request, res: Response): void => {
     const { refreshToken } = req.body;
 

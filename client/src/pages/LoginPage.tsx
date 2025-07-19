@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from '../utils/urlProxy'
 import { useDispatch, useSelector } from 'react-redux'
 import { login } from '../redux/slices/authSlice'
@@ -26,9 +26,16 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const theme = useSelector((state: any) => state.theme.mode);
+  const token = localStorage.getItem('token');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+      if (token) {
+        navigate('/home');
+      }
+  }, [token, navigate]);
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputEmail = e.target.value.trim();

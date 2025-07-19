@@ -26,7 +26,6 @@ const EditUserModal = ({ isOpen, onClose, fetchUsers, editDetails, clearEditDeta
       setImageUrl(editDetails.image || profile_pic);
     }, [])
 
-    // Handle profile change
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = event.target.files?.[0];
       if (selectedFile) {
@@ -162,7 +161,7 @@ const EditUserModal = ({ isOpen, onClose, fetchUsers, editDetails, clearEditDeta
           <div className="btns flex items-center justify-end gap-x-2 mx-3 mb-2 mt-5">
             <button type='button' className='px-4 transition-all duration-300 py-1 text-xl text-[#ddd8d591] hover:text-[#ddd8d5cd] active:text-[#4cc9887d] active:border-[#ddd8d556] font-bold rounded-md border-[3px] border-[#ddd8d531] hover:border-[#ddd8d58d]'
             onClick={onClose}>Cancel</button>
-            <button type='submit' className='px-4 transition-all duration-300 py-1 text-xl text-[#4CC988] active:text-[#4cc9887d] active:border-[#ddd8d556] font-bold rounded-md border-[3px] border-[#ddd8d556] hover:border-[#ddd8d58d]'>{isFormLoading ? 'Updating...' : 'Edit User'}</button>
+            <button type='submit' className='px-4 transition-all duration-300 py-1 text-xl text-[#4CC988] active:text-[#4cc9887d] active:border-[#ddd8d556] font-bold rounded-md border-[3px] border-[#ddd8d556] hover:border-[#ddd8d58d]'>{isFormLoading ? 'Updating...' : 'Submit'}</button>
           </div>
         </form>
       </div>

@@ -37,7 +37,7 @@ const AdminDashboard = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
-    // Pagination states
+    
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalUsers, setTotalUsers] = useState(0);
@@ -53,7 +53,6 @@ const AdminDashboard = () => {
 
     const clearEditDetails = () => setEditDetails({});
 
-    // Fetch users function with pagination
     const fetchUsers = async (page: number = currentPage): Promise<void> => {
         const token = localStorage.getItem('token');
         if (!token) return;
@@ -89,32 +88,27 @@ const AdminDashboard = () => {
         }
     };
 
-    // Fetch users when search term changes (reset to page 1)
     useEffect(() => {
         setCurrentPage(1);
         fetchUsers(1);
     }, [debouncedSearch]);
 
-    // Fetch users when page changes
     useEffect(() => {
         if (currentPage >= 1) {
             fetchUsers(currentPage);
         }
     }, [currentPage]);
 
-    // Search function
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchValue = event.target.value.toLowerCase();
         setSearchTerm(searchValue);
     };
 
-    // Logout
     const handleLogout = () => {
         dispatch(logout());
         navigate('/login');
     };
 
-    // Delete user
     const deleteUser = async (): Promise<void> => {
         try {
             console.log('User Id: ', deleteId);
@@ -123,7 +117,6 @@ const AdminDashboard = () => {
                 setIsDeleteModalOpen(false);
                 setDeleteId(null);
                 
-                // If current page becomes empty after deletion, go to previous page
                 if (users.length === 1 && currentPage > 1) {
                     setCurrentPage(currentPage - 1);
                 } else {
@@ -135,7 +128,6 @@ const AdminDashboard = () => {
         }
     };
 
-    // Pagination handlers
     const handlePreviousPage = () => {
         if (hasPrevPage) {
             setCurrentPage(prev => prev - 1);
@@ -152,7 +144,6 @@ const AdminDashboard = () => {
         setCurrentPage(pageNumber);
     };
 
-    // Generate page numbers for pagination
     const getPageNumbers = () => {
         const pages: (number | string)[] = [];
         const maxVisiblePages = 5;
@@ -188,7 +179,6 @@ const AdminDashboard = () => {
         return pages;
     };
 
-    // Refresh users after add/edit operations
     const refreshUsers = () => {
         fetchUsers(currentPage);
     };

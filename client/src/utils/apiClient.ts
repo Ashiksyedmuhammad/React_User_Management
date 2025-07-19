@@ -12,7 +12,7 @@ apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
-        console.log('Authorization header set:', config.headers['Authorization']); /////////
+        console.log('Authorization header set:', config.headers['Authorization']);
     }
     return config;
 });
@@ -25,7 +25,7 @@ apiClient.interceptors.response.use(
         console.log('Inside the middleware')
         
         if (error.response?.status === 401 && !originalRequest._retry) {
-            console.log('Detected 401 error, attempting token refresh...'); ///////
+            console.log('Detected 401 error, attempting token refresh...');
             originalRequest._retry = true;
             const storedRefreshToken = localStorage.getItem('refreshToken');
             try {
@@ -41,7 +41,12 @@ apiClient.interceptors.response.use(
                 originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
                 console.log('Token updated using refresh token!')
                 return apiClient(originalRequest);
-            } catch (refreshError) {
+            } catch (refreshError: any) {
+                if (refreshError.response && refreshError.response.status === 403) {
+                    console.warn('Refresh token is invalid or expired.');
+                    store.dispatch(logout());
+                    window.location.href = '/login';
+                }
                 console.error('Token refresh failed:', refreshError);
 
                 store.dispatch(logout());
@@ -50,7 +55,7 @@ apiClient.interceptors.response.use(
             }
         }
 
-        if (!error.response) { ///////////////////////
+        if (!error.response) {
             console.error('Network error:', error.message);
             return Promise.reject(error);
         }

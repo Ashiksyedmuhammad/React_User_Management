@@ -62,7 +62,7 @@ const RegisterPage = () => {
 
         if (!nameMessage && !emailMessage && !passwordMessage) {
             try {
-               await axios.post('/api/auth/register', { name, email, password });
+              const res =  await axios.post('/api/auth/register', { name, email, password });
                alert('Registration successful. You can now log in.');
                navigate('/login');
             } catch (error) {
